@@ -17,6 +17,16 @@ local function JumpOverObstacle()
     wait(0.5)  -- Chờ 0.5 giây để humanoid nhảy lên
 end
 
+local function AutoJump()
+    local humanoid = plr.Character:WaitForChild("Humanoid")
+
+    humanoid.Touched:Connect(function(hit)
+        if hit:IsA("Terrain") then
+            humanoid:Move(Vector3.new(0, 10, 0))
+        end
+    end)
+end
+
 local function RandomAction()
     rs.Remotes.CommF_:InvokeServer("Cousin", "Buy")
 end
@@ -64,11 +74,11 @@ wait(1)
 for i, destination in ipairs(destinations) do
     MoveTo(destination)
 
-    if i == 4 then
+    if i == 3 then
+        AutoJump()  -- Gọi hàm tự động nhảy khi đến điểm thứ 3
+        wait(5)  -- Dừng lại ở điểm thứ 3 trong 6 giây
+    elseif i == 4 then
         wait(1)  -- Dừng lại 1 giây sau khi đến điểm thứ tư
         PerformRandomActions()
-    elseif i == 3 then
-        wait(5)  -- Dừng lại ở điểm thứ 3 trong 6 giây
-        JumpOverObstacle()  -- Gọi hàm nhảy khi ở điểm thứ 3
     end
 end
