@@ -1,0 +1,74 @@
+local plr = game.Players.LocalPlayer
+local rs = game:GetService("ReplicatedStorage")
+
+local function SetTeam(teamName)
+    rs.Remotes.CommF_:InvokeServer("SetTeam", teamName)
+end
+
+local function MoveTo(destination)
+    local humanoid = plr.Character:WaitForChild("Humanoid")
+    humanoid:MoveTo(destination)
+    humanoid.MoveToFinished:Wait()
+end
+
+local function JumpOverObstacle()
+    local humanoid = plr.Character:WaitForChild("Humanoid")
+    humanoid:Move(Vector3.new(0, 10, 0))  -- Di chuyển lên để nhảy qua vật cản
+    wait(0.5)  -- Chờ 0.5 giây để humanoid nhảy lên
+end
+
+local function RandomAction()
+    rs.Remotes.CommF_:InvokeServer("Cousin", "Buy")
+end
+
+local function DropMultipleItemsFromBackpack(quantity)
+    for _, tool in ipairs(plr.Backpack:GetChildren()) do
+        if tool:IsA("Tool") then
+            tool.Parent = plr.Character
+            local toolInCharacter = plr.Character:FindFirstChild(tool.Name)
+            if toolInCharacter then
+                toolInCharacter.Parent = game.Workspace
+            end
+        end
+    end
+end
+
+local function UnequipTools()
+    for _, tool in ipairs(plr.Character:GetChildren()) do
+        if tool:IsA("Tool") then
+            tool.Parent = plr.Backpack
+        end
+    end
+end
+
+local function PerformRandomActions()
+    while true do
+        RandomAction()
+        UnequipTools()
+        wait(1)
+        DropMultipleItemsFromBackpack(200)
+        wait(1)
+    end
+end
+
+local destinations = {
+    Vector3.new(-439.756195, 74.7229309, 334.207611),
+    Vector3.new(-430.462463, 74.6348419, 383.055756),
+    Vector3.new(-426.655273, 74.6416321, 387.312103),
+    Vector3.new(-455.86972, 74.6416702, 395.822784, -0.433344334, 0.0347239897, 0.900559306, -1.60071068e-08, 0.999257505, -0.0385296345, -0.901228428, -0.0166966021, -0.433022559),
+}
+
+SetTeam("Pirates")
+wait(1)
+
+for i, destination in ipairs(destinations) do
+    MoveTo(destination)
+
+    if i == 4 then
+        wait(1)  -- Dừng lại 1 giây sau khi đến điểm thứ tư
+        PerformRandomActions()
+    elseif i == 3 then
+        wait(5)  -- Dừng lại ở điểm thứ 3 trong 6 giây
+        JumpOverObstacle()  -- Gọi hàm nhảy khi ở điểm thứ 3
+    end
+end
